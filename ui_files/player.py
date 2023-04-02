@@ -180,7 +180,7 @@ class VideoWindow(QWidget):
             self.muteButton.setEnabled(True)
             self.volumeSlider.setEnabled(True)
             self.positionSlider.setEnabled(True)
-            self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
+            self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPause))
             self.player.play()
 
     def handleError(self):
@@ -197,7 +197,6 @@ class VideoWindow(QWidget):
         file_name, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.homePath())
         if file_name != "":
             self.player.setSource(QUrl.fromLocalFile(file_name))
-            self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPause))
 
     def fullScreen(self):
         if self.isFullScreen():
