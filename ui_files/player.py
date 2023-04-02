@@ -87,6 +87,7 @@ class VideoWindow(QWidget):
         self.controlLayout.addWidget(self.playPauseButton)
         self.controlLayout.addWidget(self.forwardButton)
         self.controlLayout.addWidget(self.stopButton)
+        self.controlLayout.setContentsMargins(5, 0, 5, 0)
 
         # add spacer
         self.controlLayout.addStretch(1)
@@ -98,6 +99,7 @@ class VideoWindow(QWidget):
         # add position slider to control layout 2
         self.controlLayout2 = QHBoxLayout()
         self.controlLayout2.addWidget(self.positionSlider)
+        self.controlLayout2.setContentsMargins(5, 0, 5, 0)
 
         # add video widget to main layout
         self.videoItem = QGraphicsVideoItem()
@@ -120,9 +122,9 @@ class VideoWindow(QWidget):
         # create main layout
         self.mainLayout = QVBoxLayout()
         self.mainLayout.addWidget(self.graphicsView)
-        self.mainLayout.addLayout(self.controlLayout)
         self.mainLayout.addLayout(self.controlLayout2)
-        self.mainLayout.setContentsMargins(0, 0, 0, 0)
+        self.mainLayout.addLayout(self.controlLayout)
+        self.mainLayout.setContentsMargins(0, 0, 0, 5)
         self.setLayout(self.mainLayout)
 
     # play pause video
