@@ -1,5 +1,5 @@
 from PyQt6.QtCore import Qt, QDir, QUrl, pyqtSignal
-from PyQt6.QtGui import QCursor, QMovie, QPainter
+from PyQt6.QtGui import QCursor, QPainter
 from PyQt6.QtMultimedia import QMediaPlayer
 from PyQt6.QtMultimediaWidgets import QGraphicsVideoItem
 from PyQt6.QtWidgets import QWidget, QApplication, QPushButton, QStyle, QSlider, QHBoxLayout, QVBoxLayout, \
@@ -209,15 +209,3 @@ class VideoWindow(QWidget):
         self.player.stop()
         self.close()
         self.stackedWidget.setCurrentIndex(0)
-
-    def mouseDoubleClickEvent(self, event):
-        cursor_pos = QCursor.pos()
-        screen_height = QApplication.primaryScreen().geometry().height()
-        if cursor_pos.y() > screen_height - 200:
-            self.close()
-        return super().mouseDoubleClickEvent(event)
-
-    def keyPressEvent(self, event):
-        if event.key() == Qt.Key.Key_Escape:
-            self.close()
-        return super().keyPressEvent(event)

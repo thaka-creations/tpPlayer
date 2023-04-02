@@ -32,7 +32,6 @@ class MainController(Ui_MainWindow):
     def open_player(self):
         self.stackedWidget.setCurrentIndex(1)
 
-
     # activate key button
     def activate_key(self):
         dialog = QDialog()
