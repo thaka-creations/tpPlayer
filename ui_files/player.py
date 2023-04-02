@@ -7,8 +7,9 @@ from PyQt6.QtWidgets import QWidget, QApplication, QPushButton, QStyle, QSlider,
 
 
 class VideoWindow(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, stackedWidget):
         super().__init__()
+        self.stackedWidget = stackedWidget
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
         self.showMaximized()
         self.player = QMediaPlayer()
@@ -65,7 +66,7 @@ class VideoWindow(QWidget):
         # close button
         self.closeButton = QPushButton()
         self.closeButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogCloseButton))
-        self.closeButton.clicked.connect(self.closeEvent)
+        self.closeButton.clicked.connect(self.ensureStopped)
         self.closeButton.setFixedSize(50, 50)
 
         # full screen button
@@ -204,10 +205,10 @@ class VideoWindow(QWidget):
         else:
             self.showFullScreen()
 
-    def closeEvent(self, event):
-        self.player.stop()
-        self.player.deleteLater()
-        event.accept()
+    def ensureStopped(self, event):
+        if self.player.playbackState() == QMediaPlayer.PlaybackState.PlayingState:
+            self.player.stop()
+        self.stackedWidget.setCurrentIndex(0)
 
     def mouseDoubleClickEvent(self, event):
         cursor_pos = QCursor.pos()

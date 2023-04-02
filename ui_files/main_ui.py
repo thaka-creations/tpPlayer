@@ -104,7 +104,7 @@ class Ui_MainWindow(object):
         self.verticalLayout.addWidget(self.settingsButton)
         self.verticalLayout_2.addWidget(self.frame)
         self.stackedWidget.addWidget(self.page)
-        self.page_2 = VideoWindow(parent=self.stackedWidget)
+        self.page_2 = VideoWindow(self.stackedWidget)
         self.page_2.setObjectName("page_2")
         self.stackedWidget.addWidget(self.page_2)
         self.page_3 = QtWidgets.QWidget()
