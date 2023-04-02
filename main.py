@@ -1,6 +1,7 @@
 import ctypes
 import sys
 
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import QMainWindow, QApplication
 
 import utils
@@ -13,6 +14,7 @@ class MainWindow(QMainWindow, MainController):
         super().__init__()
         self.setupUi(self)
         self.setWindowIcon(utils.get_icon())
+        self.video_window.fullScreenSignal.connect(self.full_screen)
 
     def resizeEvent(self, event):
         self.stackedWidget.setFixedSize(event.size().width(), event.size().height())
@@ -26,6 +28,9 @@ class MainWindow(QMainWindow, MainController):
             user32 = ctypes.WinDLL("user32")
             hwnd = user32.GetForegroundWindow()
             user32.SetWindowDisplayAffinity(hwnd, 1)
+
+    def full_screen(self):
+        self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint)
 
 
 if __name__ == '__main__':

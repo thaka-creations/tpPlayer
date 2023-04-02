@@ -1,4 +1,4 @@
-from PyQt6.QtCore import Qt, QDir, QUrl
+from PyQt6.QtCore import Qt, QDir, QUrl, pyqtSignal
 from PyQt6.QtGui import QCursor, QMovie, QPainter
 from PyQt6.QtMultimedia import QMediaPlayer
 from PyQt6.QtMultimediaWidgets import QGraphicsVideoItem
@@ -7,6 +7,8 @@ from PyQt6.QtWidgets import QWidget, QApplication, QPushButton, QStyle, QSlider,
 
 
 class VideoWindow(QWidget):
+    fullScreenSignal = pyqtSignal()
+
     def __init__(self, stackedWidget):
         super().__init__()
         self.stackedWidget = stackedWidget
@@ -200,14 +202,12 @@ class VideoWindow(QWidget):
             self.player.setSource(QUrl.fromLocalFile(file_name))
 
     def fullScreen(self):
-        if self.isFullScreen():
-            self.showNormal()
-        else:
-            self.showFullScreen()
+        self.showFullScreen()
+        self.fullScreenSignal.emit()
 
-    def ensureStopped(self, event):
-        if self.player.playbackState() == QMediaPlayer.PlaybackState.PlayingState:
-            self.player.stop()
+    def ensureStopped(self):
+        self.player.stop()
+        self.close()
         self.stackedWidget.setCurrentIndex(0)
 
     def mouseDoubleClickEvent(self, event):
