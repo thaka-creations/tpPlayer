@@ -31,6 +31,7 @@ class MainWindow(QMainWindow, MainController):
 
     def full_screen(self):
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint)
+        self.showMaximized()
 
 
 if __name__ == '__main__':
