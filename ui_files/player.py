@@ -131,12 +131,21 @@ class VideoWindow(QWidget):
         # resize event
         self.graphicsView.resizeEvent = self.update_video_widget_size
 
+        # control widget
+        self.altLayout = QVBoxLayout()
+        self.controlWidget = QWidget()
+        self.controlWidget.setFixedHeight(80)
+        self.controlWidget.setContentsMargins(10, 0, 10, 10)
+        self.altLayout.addLayout(self.controlLayout2)
+        self.altLayout.addLayout(self.controlLayout)
+        self.controlWidget.setLayout(self.altLayout)
+        self.controlWidget.setContentsMargins(0, 0, 0, 0)
+
         # create main layout
         self.mainLayout = QVBoxLayout()
         self.mainLayout.addWidget(self.graphicsView)
-        self.mainLayout.addLayout(self.controlLayout2)
-        self.mainLayout.addLayout(self.controlLayout)
-        self.mainLayout.setContentsMargins(0, 0, 0, 5)
+        self.mainLayout.addWidget(self.controlWidget)
+        self.mainLayout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.mainLayout)
 
         # Set stylesheet
@@ -176,6 +185,13 @@ class VideoWindow(QWidget):
                     }
                     """
         self.setStyleSheet(stylesheet)
+
+    # control layout to hide
+    def control_layout_toggle(self, state):
+        if state:
+            self.controlWidget.setVisible(False)
+        else:
+            self.controlWidget.setVisible(True)
 
     # update video widget size
     def update_video_widget_size(self, event):
@@ -258,4 +274,3 @@ class VideoWindow(QWidget):
         self.player.stop()
         self.close()
         self.stackedWidget.setCurrentIndex(0)
-

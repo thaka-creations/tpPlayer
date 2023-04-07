@@ -35,11 +35,13 @@ class MainWindow(QMainWindow, MainController):
         self.setWindowFlags(Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.FramelessWindowHint)
         self.showMaximized()
         self.screenMode = True
+        self.video_window.control_layout_toggle(True)
 
     def normalMode(self):
         self.screenMode = False
         self.setWindowFlags(Qt.WindowType.Window)
         self.showMaximized()
+        self.video_window.control_layout_toggle(False)
 
     def mouseDoubleClickEvent(self, event):
         cursor_pos = QCursor.pos()
