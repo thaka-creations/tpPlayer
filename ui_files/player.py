@@ -1,6 +1,6 @@
-from PyQt6.QtCore import Qt, QDir, QUrl, pyqtSignal
+from PyQt6.QtCore import Qt, QDir, QUrl, pyqtSignal, QSizeF
 from PyQt6.QtGui import QCursor, QPainter
-from PyQt6.QtMultimedia import QMediaPlayer
+from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PyQt6.QtMultimediaWidgets import QGraphicsVideoItem
 from PyQt6.QtWidgets import QWidget, QApplication, QPushButton, QStyle, QSlider, QHBoxLayout, QVBoxLayout, \
     QGraphicsScene, QFileDialog, QGraphicsView, QFrame
@@ -15,7 +15,8 @@ class VideoWindow(QWidget):
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
         self.showMaximized()
         self.player = QMediaPlayer()
-
+        self.audioOutput = QAudioOutput()
+        self.player.setAudioOutput(self.audioOutput)
 
         # control buttons
         self.playPauseButton = QPushButton()
@@ -113,6 +114,8 @@ class VideoWindow(QWidget):
         self.graphicsView = QGraphicsView(self.scene)
         self.graphicsView.setMouseTracking(True)
         self.graphicsView.setFrameShape(QFrame.Shape.NoFrame)
+        self.graphicsView.setCacheMode(QGraphicsView.CacheModeFlag.CacheBackground)
+        self.graphicsView.setContentsMargins(0, 0, 0, 0)
         self.graphicsView.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.graphicsView.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.graphicsView.setRenderHints(QPainter.RenderHint.Antialiasing | QPainter.RenderHint.SmoothPixmapTransform)
@@ -122,6 +125,12 @@ class VideoWindow(QWidget):
         self.player.mediaStatusChanged.connect(self.mediaStatusChanged)
         self.player.errorOccurred.connect(self.handleError)
 
+        # center video
+        self.graphicsView.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # resize event
+        self.graphicsView.resizeEvent = self.update_video_widget_size
+
         # create main layout
         self.mainLayout = QVBoxLayout()
         self.mainLayout.addWidget(self.graphicsView)
@@ -129,6 +138,84 @@ class VideoWindow(QWidget):
         self.mainLayout.addLayout(self.controlLayout)
         self.mainLayout.setContentsMargins(0, 0, 0, 5)
         self.setLayout(self.mainLayout)
+
+        # Set stylesheet
+        stylesheet = """
+                    QProgressBar {
+                        border: 2px solid grey;
+                        border-radius: 5px;
+                        background-color: white;
+                    }
+                    QProgressBar::chunk {
+                        background-color: blue;
+                        width: 10px;
+                        margin: 0.5px;
+                    }
+                    QPushButton#playPauseButton, QPushButton#forwardButton, QPushButton#backwardButton, QPushButton#muteButton {
+                        border: 1px solid #000;
+                        border-top-left-radius: 4px;
+                        border-bottom-left-radius: 4px;
+                        background-color: #e5e5e5;
+                        font-size: 16px;
+                        padding: 8px 16px;
+                    }
+
+                    QPushButton#playPauseButton:hover {
+                        background-color: #d0d0d0;
+                    }
+
+                    QPushButton#playPauseButton:pressed {
+                        background-color: #c0c0c0;
+                    }
+
+                    QPushButton#stopButton {
+                        border: 1px solid #000;
+                        border-top-right-radius: 4px;
+                        border-bottom-right-radius: 4px;
+                        background-color: #e5e5e5;
+                        font-size: 16px;
+                        padding: 8px 16px;
+                    }
+
+                    QPushButton#stopButton:hover {
+                        background-color: #d0d0d0;
+                    }
+
+                    QPushButton#stopButton:pressed {
+                        background-color: #c0c0c0;
+                    }
+
+                    QSlider {
+                        background-color: transparent;
+                    }
+
+                    QSlider::groove:horizontal {
+                        height: 6px;
+                        background-color: #d0d0d0;
+                        border-radius: 3px;
+                    }
+
+                    QSlider::handle:horizontal {
+                        width: 16px;
+                        height: 16px;
+                        background-color: #e5e5e5;
+                        border-radius: 8px;
+                        margin: -5px 0px;
+                    }
+
+                    QSlider::sub-page:horizontal {
+                        background-color: #0078d7;
+                        border-radius: 2px;
+                    }
+                    """
+        self.setStyleSheet(stylesheet)
+
+    # update video widget size
+    def update_video_widget_size(self, event):
+        self.videoItem.setSize(QSizeF(event.size()))
+        self.videoItem.update()
+        self.graphicsView.update()
+        self.graphicsView.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
     # play pause video
     def playPause(self):
@@ -155,12 +242,13 @@ class VideoWindow(QWidget):
     # mute video
     def mute(self):
         if self.player.audioOutput().isMuted():
-            self.player.audioOutput().setMuted(False)
+            self.audioOutput.setMuted(False)
         else:
-            self.player.audioOutput().setMuted(True)
+            self.audioOutput.setMuted(True)
 
+    # volume controller
     def setVolume(self, volume):
-        self.player.audioOutput().setVolume(volume)
+        self.audioOutput.setVolume(volume)
 
     def setPosition(self, position):
         self.player.setPosition(position)
@@ -209,3 +297,4 @@ class VideoWindow(QWidget):
         self.player.stop()
         self.close()
         self.stackedWidget.setCurrentIndex(0)
+
