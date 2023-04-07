@@ -298,13 +298,13 @@ class VideoWindow(QWidget):
             self.player.stop()
         else:
             self.buffer.open(QIODevice.OpenModeFlag.ReadWrite)
-            self.player.setSourceDevice(self.buffer)
         self.buffer.write(open(file_name, 'rb').read())
         self.buffer.seek(0)
         self.playPauseButton.setEnabled(True)
         self.set_button_states(True)
         self.positionSlider.setEnabled(True)
         self.toggle_spinner(False)
+        self.player.setSourceDevice(self.buffer)
         self.player.play()
 
     def fullScreen(self):
