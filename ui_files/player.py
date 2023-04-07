@@ -28,7 +28,7 @@ class VideoWindow(QWidget):
         # stop
         self.stopButton = QPushButton()
         self.stopButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaStop))
-        self.stopButton.clicked.connect(self.ensureStopped)
+        self.stopButton.clicked.connect(self.player.stop)
         self.stopButton.setFixedSize(50, 50)
         self.stopButton.setEnabled(False)
 
@@ -193,10 +193,6 @@ class VideoWindow(QWidget):
             self.player.play()
             self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPause))
 
-    # stop playing video
-    def ensureStopped(self):
-        self.player.stop()
-
     # forward video
     def forward(self):
         if self.player.playbackState() == QMediaPlayer.PlaybackState.PlayingState:
@@ -234,16 +230,10 @@ class VideoWindow(QWidget):
         self.muteButton.setEnabled(state)
 
     def mediaStatusChanged(self, status):
-        if status == QMediaPlayer.MediaStatus.EndOfMedia:
-            self.player.stop()
-            self.set_button_states(False)
-            self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
-        elif status == QMediaPlayer.MediaStatus.LoadedMedia:
-            self.set_button_states(True)
-            self.playPauseButton.setEnabled(True)
-            self.positionSlider.setEnabled(True)
-            self.player.play()
+        if self.player.PlaybackState.PlayingState == QMediaPlayer.PlaybackState.PlayingState:
             self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPause))
+        else:
+            self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
 
     def handleError(self):
         self.playPauseButton.setEnabled(False)
@@ -255,13 +245,17 @@ class VideoWindow(QWidget):
         file_name, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.homePath())
         if file_name != "":
             self.player.setSource(QUrl.fromLocalFile(file_name))
+            self.playPauseButton.setEnabled(True)
+            self.set_button_states(True)
+            self.positionSlider.setEnabled(True)
+            self.player.play()
 
     def fullScreen(self):
         self.showFullScreen()
         self.fullScreenSignal.emit()
 
     def exitPlayer(self):
-        self.ensureStopped()
+        self.player.stop()
         self.close()
         self.stackedWidget.setCurrentIndex(0)
 
