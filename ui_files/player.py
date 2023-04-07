@@ -296,6 +296,7 @@ class VideoWindow(QWidget):
         self.toggle_spinner(True)
         if self.buffer.isOpen():
             self.player.stop()
+            self.player.setSourceDevice(QBuffer())
         else:
             self.buffer.open(QIODevice.OpenModeFlag.ReadWrite)
         self.buffer.write(open(file_name, 'rb').read())
