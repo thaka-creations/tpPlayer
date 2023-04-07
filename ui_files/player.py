@@ -114,7 +114,7 @@ class VideoWindow(QWidget):
         self.graphicsView = QGraphicsView(self.scene)
         self.graphicsView.setMouseTracking(True)
         self.graphicsView.setFrameShape(QFrame.Shape.NoFrame)
-        self.graphicsView.setCacheMode(QGraphicsView.CacheModeFlag.CacheBackground)
+        # self.graphicsView.setCacheMode(QGraphicsView.CacheModeFlag.CacheBackground)
         self.graphicsView.setContentsMargins(0, 0, 0, 0)
         self.graphicsView.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.graphicsView.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
@@ -133,7 +133,6 @@ class VideoWindow(QWidget):
         # control widget
         self.altLayout = QVBoxLayout()
         self.controlWidget = QWidget()
-        self.controlWidget.setFixedHeight(80)
         self.altLayout.setContentsMargins(0, 0, 0, 10)
         self.altLayout.addLayout(self.controlLayout2)
         self.altLayout.addLayout(self.controlLayout)
