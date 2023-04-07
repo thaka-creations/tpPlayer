@@ -187,8 +187,10 @@ class VideoWindow(QWidget):
     # play pause video
     def playPause(self):
         if self.player.playbackState() == QMediaPlayer.PlaybackState.PlayingState:
+            self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
             self.player.pause()
         else:
+            self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPause))
             self.player.play()
 
     # forward video
