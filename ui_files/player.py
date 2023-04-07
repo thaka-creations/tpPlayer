@@ -298,7 +298,6 @@ class VideoWindow(QWidget):
         self.buffer.write(open(file_name, 'rb').read())
         self.buffer.seek(0)
         self.player.setSourceDevice(self.buffer)
-        self.buffer.close()
         self.playPauseButton.setEnabled(True)
         self.set_button_states(True)
         self.positionSlider.setEnabled(True)
