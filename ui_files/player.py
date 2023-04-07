@@ -145,7 +145,7 @@ class VideoWindow(QWidget):
         self.mainLayout = QVBoxLayout()
         self.mainLayout.addWidget(self.graphicsView)
         self.mainLayout.addWidget(self.controlWidget)
-        self.mainLayout.setContentsMargins(0, 0, 0, 0)
+        self.mainLayout.setContentsMargins(0, 0, 0, 5)
         self.setLayout(self.mainLayout)
 
         # Set stylesheet
