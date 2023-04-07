@@ -188,10 +188,8 @@ class VideoWindow(QWidget):
     def playPause(self):
         if self.player.playbackState() == QMediaPlayer.PlaybackState.PlayingState:
             self.player.pause()
-            self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
         else:
             self.player.play()
-            self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPause))
 
     # forward video
     def forward(self):
@@ -230,7 +228,7 @@ class VideoWindow(QWidget):
         self.muteButton.setEnabled(state)
 
     def mediaStatusChanged(self, status):
-        if self.player.PlaybackState.PlayingState == QMediaPlayer.PlaybackState.PlayingState:
+        if self.player.playbackState() == QMediaPlayer.PlaybackState.PlayingState:
             self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPause))
         else:
             self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
