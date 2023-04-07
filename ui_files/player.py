@@ -299,6 +299,7 @@ class VideoWindow(QWidget):
 
     # load to memory and play file
     def loadPlayMedia(self, file_name):
+        self.toggle_spinner(True)
         self.buffer.open(QIODevice.OpenModeFlag.ReadWrite)
         self.buffer.write(open(file_name, 'rb').read())
         self.buffer.seek(0)
@@ -306,6 +307,7 @@ class VideoWindow(QWidget):
         self.playPauseButton.setEnabled(True)
         self.set_button_states(True)
         self.positionSlider.setEnabled(True)
+        self.toggle_spinner(False)
         self.player.play()
 
     def fullScreen(self):
