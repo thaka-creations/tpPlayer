@@ -292,9 +292,11 @@ class VideoWindow(QWidget):
 
     # load to memory and play file
     def loadPlayMedia(self, file_name):
-        # check if buffer has data
+        # overwrite buffer
         if self.buffer.isOpen():
             self.buffer.close()
+        self.buffer.setData(b'')
+
         self.toggle_spinner(True)
         self.buffer.open(QIODevice.OpenModeFlag.ReadWrite)
         self.buffer.write(open(file_name, 'rb').read())
