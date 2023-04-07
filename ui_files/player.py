@@ -117,7 +117,7 @@ class VideoWindow(QWidget):
         try:
             loader = os.path.join(sys._MEIPASS, "loader.gif")
         except AttributeError:
-            loader = "loader.gif"
+            loader = "assets/loader.gif"
         self.movie = QMovie(loader)
         self.spinner.setMovie(self.movie)
         self.spinner.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -134,7 +134,6 @@ class VideoWindow(QWidget):
         self.scene.setBackgroundBrush(Qt.GlobalColor.black)
         self.graphicsView = QGraphicsView(self.scene)
         self.graphicsView.setMouseTracking(True)
-        self.toggle_spinner(True)
         self.graphicsView.setFrameShape(QFrame.Shape.NoFrame)
         self.graphicsView.setContentsMargins(0, 0, 0, 0)
         self.graphicsView.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
@@ -227,6 +226,7 @@ class VideoWindow(QWidget):
         self.videoItem.update()
         self.graphicsView.update()
         self.graphicsView.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.proxy.setPos(self.width() / 2 - 125, self.height() / 2 - 125)
 
     # play pause video
     def playPause(self):
@@ -288,10 +288,12 @@ class VideoWindow(QWidget):
     def openFile(self):
         file_name, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.homePath())
         if file_name != "":
+            self.toggle_spinner(True)
             self.player.setSource(QUrl.fromLocalFile(file_name))
             self.playPauseButton.setEnabled(True)
             self.set_button_states(True)
             self.positionSlider.setEnabled(True)
+            self.toggle_spinner(False)
             self.player.play()
 
     def fullScreen(self):
