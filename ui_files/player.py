@@ -151,39 +151,6 @@ class VideoWindow(QWidget):
                         width: 10px;
                         margin: 0.5px;
                     }
-                    QPushButton#playPauseButton, QPushButton#forwardButton, QPushButton#backwardButton, QPushButton#muteButton {
-                        border: 1px solid #000;
-                        border-top-left-radius: 4px;
-                        border-bottom-left-radius: 4px;
-                        background-color: #e5e5e5;
-                        font-size: 16px;
-                        padding: 8px 16px;
-                    }
-
-                    QPushButton#playPauseButton:hover {
-                        background-color: #d0d0d0;
-                    }
-
-                    QPushButton#playPauseButton:pressed {
-                        background-color: #c0c0c0;
-                    }
-
-                    QPushButton#stopButton {
-                        border: 1px solid #000;
-                        border-top-right-radius: 4px;
-                        border-bottom-right-radius: 4px;
-                        background-color: #e5e5e5;
-                        font-size: 16px;
-                        padding: 8px 16px;
-                    }
-
-                    QPushButton#stopButton:hover {
-                        background-color: #d0d0d0;
-                    }
-
-                    QPushButton#stopButton:pressed {
-                        background-color: #c0c0c0;
-                    }
 
                     QSlider {
                         background-color: transparent;
@@ -221,8 +188,10 @@ class VideoWindow(QWidget):
     def playPause(self):
         if self.player.playbackState() == QMediaPlayer.PlaybackState.PlayingState:
             self.player.pause()
+            self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
         else:
             self.player.play()
+            self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPause))
 
     # stop playing video
     def stop(self):
@@ -259,28 +228,26 @@ class VideoWindow(QWidget):
     def durationChanged(self, duration):
         self.positionSlider.setRange(0, duration)
 
+    def set_button_states(self, state):
+        self.stopButton.setEnabled(state)
+        self.forwardButton.setEnabled(state)
+        self.backwardButton.setEnabled(state)
+        self.muteButton.setEnabled(state)
+
     def mediaStatusChanged(self, status):
         if status == QMediaPlayer.MediaStatus.EndOfMedia:
             self.player.stop()
+            self.set_button_states(False)
             self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
         elif status == QMediaPlayer.MediaStatus.LoadedMedia:
+            self.set_button_states(True)
             self.playPauseButton.setEnabled(True)
-            self.stopButton.setEnabled(True)
-            self.forwardButton.setEnabled(True)
-            self.backwardButton.setEnabled(True)
-            self.muteButton.setEnabled(True)
-            self.volumeSlider.setEnabled(True)
             self.positionSlider.setEnabled(True)
-            self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPause))
             self.player.play()
 
     def handleError(self):
         self.playPauseButton.setEnabled(False)
         self.stopButton.setEnabled(False)
-        self.forwardButton.setEnabled(False)
-        self.backwardButton.setEnabled(False)
-        self.muteButton.setEnabled(False)
-        self.volumeSlider.setEnabled(False)
         self.positionSlider.setEnabled(False)
         self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
 
