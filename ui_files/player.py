@@ -289,16 +289,12 @@ class VideoWindow(QWidget):
         file_name, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.homePath())
         if file_name != "":
             self.loadPlayMedia(file_name)
-            # self.toggle_spinner(True)
-            # self.player.setSource(QUrl.fromLocalFile(file_name))
-            # self.playPauseButton.setEnabled(True)
-            # self.set_button_states(True)
-            # self.positionSlider.setEnabled(True)
-            # self.toggle_spinner(False)
-            # self.player.play()
 
     # load to memory and play file
     def loadPlayMedia(self, file_name):
+        # check if buffer has data
+        if self.buffer.isOpen():
+            self.buffer.close()
         self.toggle_spinner(True)
         self.buffer.open(QIODevice.OpenModeFlag.ReadWrite)
         self.buffer.write(open(file_name, 'rb').read())
