@@ -195,8 +195,7 @@ class VideoWindow(QWidget):
 
     # stop playing video
     def stop(self):
-        if self.player.playbackState() == QMediaPlayer.PlaybackState.PlayingState:
-            self.player.stop()
+        self.player.stop()
 
     # forward video
     def forward(self):
@@ -244,6 +243,7 @@ class VideoWindow(QWidget):
             self.playPauseButton.setEnabled(True)
             self.positionSlider.setEnabled(True)
             self.player.play()
+            self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPause))
 
     def handleError(self):
         self.playPauseButton.setEnabled(False)
