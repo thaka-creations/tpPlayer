@@ -299,6 +299,10 @@ class VideoWindow(QWidget):
         else:
             print('buffer is open')
             self.player.stop()
+            print('player stopped')
+            self.buffer.close()
+            self.buffer.open(QIODevice.OpenModeFlag.ReadWrite)
+            print('buffer is closed')
         self.buffer.write(open(file_name, 'rb').read())
         self.buffer.seek(0)
         self.player.setSourceDevice(self.buffer)
