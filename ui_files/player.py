@@ -69,7 +69,7 @@ class VideoWindow(QWidget):
         # close button
         self.closeButton = QPushButton()
         self.closeButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_DialogCloseButton))
-        self.closeButton.clicked.connect(self.ensureStopped)
+        self.closeButton.clicked.connect(self.exitPlayer)
         self.closeButton.setFixedSize(50, 50)
 
         # full screen button
@@ -260,8 +260,8 @@ class VideoWindow(QWidget):
         self.showFullScreen()
         self.fullScreenSignal.emit()
 
-    def ensureStopped(self):
-        self.player.stop()
+    def exitPlayer(self):
+        self.ensureStopped()
         self.close()
         self.stackedWidget.setCurrentIndex(0)
 
