@@ -294,15 +294,9 @@ class VideoWindow(QWidget):
     def loadPlayMedia(self, file_name):
         # overwrite buffer
         self.toggle_spinner(True)
-        if self.buffer.isOpen():
-            self.player.stop()
-            self.buffer.write(open(file_name, 'rb').read())
-            self.buffer.seek(0)
-        else:
-            self.buffer.open(QIODevice.OpenModeFlag.ReadWrite)
-            self.buffer.write(open(file_name, 'rb').read())
-            self.buffer.seek(0)
-            self.player.setSourceDevice(self.buffer)
+        self.buffer.setData(open(file_name, 'rb').read())
+        self.buffer.open(QIODevice.OpenModeFlag.ReadOnly)
+        self.player.setSourceDevice(self.buffer)
         self.playPauseButton.setEnabled(True)
         self.set_button_states(True)
         self.positionSlider.setEnabled(True)
