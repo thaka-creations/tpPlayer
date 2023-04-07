@@ -28,7 +28,7 @@ class VideoWindow(QWidget):
         # stop
         self.stopButton = QPushButton()
         self.stopButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaStop))
-        self.stopButton.clicked.connect(self.stop)
+        self.stopButton.clicked.connect(self.ensureStopped)
         self.stopButton.setFixedSize(50, 50)
         self.stopButton.setEnabled(False)
 
@@ -194,7 +194,7 @@ class VideoWindow(QWidget):
             self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPause))
 
     # stop playing video
-    def stop(self):
+    def ensureStopped(self):
         self.player.stop()
 
     # forward video
