@@ -1,9 +1,12 @@
-from PyQt6.QtCore import Qt, QDir, QUrl, pyqtSignal, QSizeF
-from PyQt6.QtGui import QCursor, QPainter
+import os
+import sys
+
+from PyQt6.QtCore import Qt, QDir, QUrl, pyqtSignal, QSizeF, QRect, QSize
+from PyQt6.QtGui import QCursor, QPainter, QMovie
 from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PyQt6.QtMultimediaWidgets import QGraphicsVideoItem
 from PyQt6.QtWidgets import QWidget, QApplication, QPushButton, QStyle, QSlider, QHBoxLayout, QVBoxLayout, \
-    QGraphicsScene, QFileDialog, QGraphicsView, QFrame
+    QGraphicsScene, QFileDialog, QGraphicsView, QFrame, QLabel, QGraphicsProxyWidget
 
 
 class VideoWindow(QWidget):
@@ -105,6 +108,24 @@ class VideoWindow(QWidget):
         self.controlLayout2.addWidget(self.positionSlider)
         self.controlLayout2.setContentsMargins(5, 0, 5, 0)
 
+        # spinner
+        self.spinner = QLabel()
+        self.spinner.setGeometry(QRect(25, 25, 200, 200))
+        self.spinner.setMinimumSize(QSize(250, 250))
+        self.spinner.setMaximumSize(QSize(250, 250))
+        self.spinner.setObjectName("lb1")
+        try:
+            loader = os.path.join(sys._MEIPASS, "loader.gif")
+        except AttributeError:
+            loader = "loader.gif"
+        self.movie = QMovie(loader)
+        self.spinner.setMovie(self.movie)
+        self.spinner.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.spinner.setStyleSheet("background-color: black;")
+
+        self.proxy = QGraphicsProxyWidget()
+        self.proxy.setWidget(self.spinner)
+
         # add video widget to main layout
         self.videoItem = QGraphicsVideoItem()
         self.scene = QGraphicsScene()
@@ -113,8 +134,8 @@ class VideoWindow(QWidget):
         self.scene.setBackgroundBrush(Qt.GlobalColor.black)
         self.graphicsView = QGraphicsView(self.scene)
         self.graphicsView.setMouseTracking(True)
+        self.toggle_spinner(True)
         self.graphicsView.setFrameShape(QFrame.Shape.NoFrame)
-        # self.graphicsView.setCacheMode(QGraphicsView.CacheModeFlag.CacheBackground)
         self.graphicsView.setContentsMargins(0, 0, 0, 0)
         self.graphicsView.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.graphicsView.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
@@ -183,6 +204,15 @@ class VideoWindow(QWidget):
                     }
                     """
         self.setStyleSheet(stylesheet)
+
+    # control spinner
+    def toggle_spinner(self, state):
+        if state:
+            self.scene.addItem(self.proxy)
+            self.movie.start()
+        else:
+            self.scene.removeItem(self.proxy)
+            self.movie.stop()
 
     # control layout to hide
     def control_layout_toggle(self, state):
