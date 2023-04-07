@@ -135,7 +135,7 @@ class VideoWindow(QWidget):
         self.altLayout = QVBoxLayout()
         self.controlWidget = QWidget()
         self.controlWidget.setFixedHeight(80)
-        self.controlWidget.setContentsMargins(10, 0, 10, 10)
+        self.altLayout.setContentsMargins(0, 0, 0, 10)
         self.altLayout.addLayout(self.controlLayout2)
         self.altLayout.addLayout(self.controlLayout)
         self.controlWidget.setLayout(self.altLayout)
@@ -145,7 +145,7 @@ class VideoWindow(QWidget):
         self.mainLayout = QVBoxLayout()
         self.mainLayout.addWidget(self.graphicsView)
         self.mainLayout.addWidget(self.controlWidget)
-        self.mainLayout.setContentsMargins(0, 0, 0, 5)
+        self.mainLayout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.mainLayout)
 
         # Set stylesheet
@@ -268,6 +268,7 @@ class VideoWindow(QWidget):
 
     def fullScreen(self):
         self.showFullScreen()
+        self.controlWidget.setVisible(False)
         self.fullScreenSignal.emit()
 
     def exitPlayer(self):
