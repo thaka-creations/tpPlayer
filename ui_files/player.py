@@ -1,7 +1,7 @@
 import os
 import sys
 
-from PyQt6.QtCore import Qt, QDir, QUrl, pyqtSignal, QSizeF, QRect, QSize
+from PyQt6.QtCore import Qt, QDir, QUrl, pyqtSignal, QSizeF, QRect, QSize, QBuffer, QIODevice
 from PyQt6.QtGui import QCursor, QPainter, QMovie
 from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
 from PyQt6.QtMultimediaWidgets import QGraphicsVideoItem
@@ -20,6 +20,7 @@ class VideoWindow(QWidget):
         self.player = QMediaPlayer()
         self.audioOutput = QAudioOutput()
         self.player.setAudioOutput(self.audioOutput)
+        self.buffer = QBuffer()
 
         # control buttons
         self.playPauseButton = QPushButton()
@@ -61,7 +62,6 @@ class VideoWindow(QWidget):
         self.volumeSlider.setRange(0, 100)
         self.volumeSlider.setValue(100)
         self.volumeSlider.valueChanged.connect(self.setVolume)
-        self.volumeSlider.setEnabled(False)
 
         # open file button
         self.openFileButton = QPushButton()
@@ -222,11 +222,11 @@ class VideoWindow(QWidget):
 
     # update video widget size
     def update_video_widget_size(self, event):
+        self.proxy.setPos(self.width() / 2 - 125, self.height() / 2 - 125)
         self.videoItem.setSize(QSizeF(event.size()))
         self.videoItem.update()
         self.graphicsView.update()
         self.graphicsView.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.proxy.setPos(self.width() / 2 - 125, self.height() / 2 - 125)
 
     # play pause video
     def playPause(self):
@@ -288,17 +288,29 @@ class VideoWindow(QWidget):
     def openFile(self):
         file_name, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.homePath())
         if file_name != "":
-            self.toggle_spinner(True)
-            self.player.setSource(QUrl.fromLocalFile(file_name))
-            self.playPauseButton.setEnabled(True)
-            self.set_button_states(True)
-            self.positionSlider.setEnabled(True)
-            self.toggle_spinner(False)
-            self.player.play()
+            self.loadPlayMedia(file_name)
+            # self.toggle_spinner(True)
+            # self.player.setSource(QUrl.fromLocalFile(file_name))
+            # self.playPauseButton.setEnabled(True)
+            # self.set_button_states(True)
+            # self.positionSlider.setEnabled(True)
+            # self.toggle_spinner(False)
+            # self.player.play()
+
+    # load to memory and play file
+    def loadPlayMedia(self, file_name):
+        self.buffer.open(QIODevice.OpenModeFlag.ReadWrite)
+        self.buffer.write(open(file_name, 'rb').read())
+        self.buffer.seek(0)
+        self.player.setSourceDevice(self.buffer)
+        self.playPauseButton.setEnabled(True)
+        self.set_button_states(True)
+        self.positionSlider.setEnabled(True)
+        self.player.play()
 
     def fullScreen(self):
         self.showFullScreen()
-        self.controlWidget.setVisible(False)
+        self.control_layout_toggle(True)
         self.fullScreenSignal.emit()
 
     def exitPlayer(self):
