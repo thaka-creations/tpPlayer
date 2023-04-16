@@ -332,3 +332,19 @@ def get_registered_keys():
         return True, response.json()['message']
     except requests.exceptions.ConnectionError:
         return False, "No internet connection"
+
+
+def activate_key(key, app_id, headers):
+    url = f"{BASE_URL}/api/v1/videos/activate-key"
+    headers.update({'key': key, 'app_id': app_id})
+
+    try:
+        response = requests.post(url, json=headers)
+        if response.status_code == 200:
+            return True, response.json()['message']
+        elif response.status_code == 403:
+            return False, '403'
+        else:
+            return False, response.json()['message']
+    except requests.exceptions.ConnectionError:
+        return False, "Kindly check your internet connection"
