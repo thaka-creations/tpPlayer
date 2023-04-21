@@ -12,8 +12,8 @@ from threading import Thread
 
 import requests
 from cryptography.fernet import Fernet
-from PyQt6.QtCore import QSettings
-from PyQt6.QtGui import QIcon
+from PyQt5.QtCore import QSettings
+from PyQt5.QtGui import QIcon
 
 import settings
 from settings import BASE_URL

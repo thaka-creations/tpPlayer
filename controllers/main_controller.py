@@ -2,9 +2,9 @@ import base64
 from datetime import datetime
 from threading import Thread
 
-from PyQt6.QtCore import QSettings, QUrl
-from PyQt6.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
-from PyQt6.QtWidgets import QDialog, QMessageBox
+from PyQt5.QtCore import QSettings, QUrl
+from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
+from PyQt5.QtWidgets import QDialog, QMessageBox
 
 from controllers.login_controller import LoginController
 from ui_files.main_ui import Ui_MainWindow

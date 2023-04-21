@@ -1,5 +1,5 @@
 import requests
-from PyQt6.QtWidgets import QMessageBox, QPushButton, QDialog
+from PyQt5.QtWidgets import QMessageBox, QPushButton, QDialog
 
 from controllers import verify_otp_controller, register_controller
 from ui_files.login_ui import Ui_loginDialog

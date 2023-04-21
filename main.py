@@ -1,9 +1,9 @@
 import ctypes
 import sys
 
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QCursor
-from PyQt6.QtWidgets import QMainWindow, QApplication
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QCursor
+from PyQt5.QtWidgets import QMainWindow, QApplication
 
 import utils
 from ui_files.main_ui import Ui_MainWindow

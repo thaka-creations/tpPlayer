@@ -1,11 +1,11 @@
 import os
 import sys
 
-from PyQt6.QtCore import Qt, QDir, QUrl, pyqtSignal, QSizeF, QRect, QSize, QBuffer, QIODevice
-from PyQt6.QtGui import QCursor, QPainter, QMovie
-from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
-from PyQt6.QtMultimediaWidgets import QGraphicsVideoItem
-from PyQt6.QtWidgets import QWidget, QApplication, QPushButton, QStyle, QSlider, QHBoxLayout, QVBoxLayout, \
+from PyQt5.QtCore import Qt, QDir, pyqtSignal, QSizeF, QRect, QSize, QBuffer, QIODevice
+from PyQt5.QtGui import QMovie
+from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
+from PyQt5.QtMultimediaWidgets import QGraphicsVideoItem
+from PyQt5.QtWidgets import QWidget, QPushButton, QStyle, QSlider, QHBoxLayout, QVBoxLayout, \
     QGraphicsScene, QFileDialog, QGraphicsView, QFrame, QLabel, QGraphicsProxyWidget
 
 
@@ -17,9 +17,7 @@ class VideoWindow(QWidget):
         self.stackedWidget = stackedWidget
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
         self.showMaximized()
-        self.player = QMediaPlayer()
-        self.audioOutput = QAudioOutput()
-        self.player.setAudioOutput(self.audioOutput)
+        self.player = QMediaPlayer(None)
         self.buffer = QBuffer()
 
         # control buttons
@@ -61,7 +59,7 @@ class VideoWindow(QWidget):
         self.volumeSlider = QSlider(Qt.Orientation.Horizontal)
         self.volumeSlider.setRange(0, 100)
         self.volumeSlider.setValue(100)
-        self.volumeSlider.valueChanged.connect(self.setVolume)
+        self.volumeSlider.valueChanged.connect(self.player.setVolume)
 
         # open file button
         self.openFileButton = QPushButton()
@@ -142,7 +140,7 @@ class VideoWindow(QWidget):
         self.player.positionChanged.connect(self.positionChanged)
         self.player.durationChanged.connect(self.durationChanged)
         self.player.mediaStatusChanged.connect(self.mediaStatusChanged)
-        self.player.errorOccurred.connect(self.handleError)
+        self.player.error.connect(self.handleError)
 
         # center video
         self.graphicsView.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -230,7 +228,7 @@ class VideoWindow(QWidget):
 
     # play pause video
     def playPause(self):
-        if self.player.playbackState() == QMediaPlayer.PlaybackState.PlayingState:
+        if self.player.state() == QMediaPlayer.State.PlayingState:
             self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
             self.player.pause()
         else:
@@ -239,24 +237,22 @@ class VideoWindow(QWidget):
 
     # forward video
     def forward(self):
-        if self.player.playbackState() == QMediaPlayer.PlaybackState.PlayingState:
+        if self.player.state() == QMediaPlayer.State.PlayingState:
             self.player.setPosition(self.player.position() + 10000)
 
     # backward video
     def backward(self):
-        if self.player.playbackState() == QMediaPlayer.PlaybackState.PlayingState:
+        if self.player.state() == QMediaPlayer.State.PlayingState:
             self.player.setPosition(self.player.position() - 10000)
 
     # mute video
     def mute(self):
-        if self.player.audioOutput().isMuted():
-            self.audioOutput.setMuted(False)
+        if self.player.isMuted():
+            self.player.setMuted(False)
+            self.muteButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaVolume))
         else:
-            self.audioOutput.setMuted(True)
-
-    # volume controller
-    def setVolume(self, volume):
-        self.audioOutput.setVolume(volume)
+            self.player.setMuted(True)
+            self.muteButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaVolumeMuted))
 
     def setPosition(self, position):
         self.player.setPosition(position)
@@ -273,8 +269,8 @@ class VideoWindow(QWidget):
         self.backwardButton.setEnabled(state)
         self.muteButton.setEnabled(state)
 
-    def mediaStatusChanged(self, status):
-        if self.player.playbackState() == QMediaPlayer.PlaybackState.PlayingState:
+    def mediaStatusChanged(self, state):
+        if self.player.state() == QMediaPlayer.State.PlayingState:
             self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPause))
         else:
             self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
@@ -297,11 +293,11 @@ class VideoWindow(QWidget):
         if self.buffer.isOpen():
             # remove video from player
             self.player.stop()
-            self.player.setSourceDevice(QBuffer())
+            self.player.setMedia(QMediaContent(), QBuffer())
             self.buffer.close()
         self.buffer.setData(open(file_name, 'rb').read())
         self.buffer.open(QIODevice.OpenModeFlag.ReadOnly)
-        self.player.setSourceDevice(self.buffer)
+        self.player.setMedia(QMediaContent(), self.buffer)
         self.playPauseButton.setEnabled(True)
         self.set_button_states(True)
         self.positionSlider.setEnabled(True)

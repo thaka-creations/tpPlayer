@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QMessageBox, QDialog, QPushButton
+from PyQt5.QtWidgets import QMessageBox, QDialog, QPushButton
 
 import utils
 from controllers import login_controller

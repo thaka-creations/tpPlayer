@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import QPushButton, QMessageBox, QDialog
+from PyQt5.QtWidgets import QPushButton, QMessageBox, QDialog
 
 import utils
 from controllers import verify_otp_controller

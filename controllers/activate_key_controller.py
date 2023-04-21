@@ -1,7 +1,7 @@
-from PyQt6.QtWidgets import QMessageBox, QDialog
+from PyQt5.QtWidgets import QMessageBox, QDialog
 
 import utils
-from PyQt6.QtCore import QSettings
+from PyQt5.QtCore import QSettings
 
 from controllers import login_controller
 from ui_files.activation_dialog_ui import Ui_activateKeyDialog
