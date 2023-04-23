@@ -1,4 +1,5 @@
 import ctypes
+import os
 import sys
 
 from PyQt5.QtCore import Qt
@@ -6,8 +7,9 @@ from PyQt5.QtGui import QCursor
 from PyQt5.QtWidgets import QMainWindow, QApplication
 
 import utils
-from ui_files.main_ui import Ui_MainWindow
 from controllers.main_controller import MainController
+
+os.environ['QT_MULTIMEDIA_PREFERRED_PLUGINS'] = 'windowsmediafoundation'
 
 
 class MainWindow(QMainWindow, MainController):
