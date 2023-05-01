@@ -102,8 +102,8 @@ class MainController(Ui_MainWindow):
         self.nam.get(QNetworkRequest(QUrl("https://www.google.com")))
 
     # internet response handler
-    def on_result(self, reply: QNetworkReply):
-        if not reply.error():
+    def on_result(self, reply):
+        if not (reply.error() == QNetworkReply.NetworkError.NoError):
             self.display_message("Error", "This action requires internet connection")
             return
         status_code, message = utils.get_registered_keys()
@@ -128,8 +128,8 @@ class MainController(Ui_MainWindow):
             print(e)
             self.display_message("No keys found")
 
-    def on_alt_result(self, reply: QNetworkReply):
-        if not reply.error():
+    def on_alt_result(self, reply):
+        if not (reply.error() == QNetworkReply.NetworkError.NoError):
             reset = False
             next_connection_date = utils.get_next_connection_date()
             if not next_connection_date:
