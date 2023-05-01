@@ -1,5 +1,7 @@
 import os
 import sys
+import random
+
 import utils
 import key_utils
 from threading import Thread
@@ -298,9 +300,6 @@ class VideoWindow(QWidget):
     def setPosition(self, position):
         self.player.setPosition(position)
 
-    def positionChanged(self, position):
-        self.positionSlider.setValue(position)
-
     def durationChanged(self, duration):
         self.positionSlider.setRange(0, duration)
 
@@ -375,6 +374,17 @@ class VideoWindow(QWidget):
         self.watermark.setDefaultTextColor(Qt.GlobalColor.red)
         self.scene.addItem(self.watermark)
         self.definedDimensions()
+
+    def positionChanged(self, position):
+        self.positionSlider.setValue(position)
+
+        # move watermark after position has moved twice
+        if self.watermark:
+            self.step += 1
+            if (self.step % 13) == 0:
+                x, y = int(self.definedWidth), int(self.definedHeight)
+                randX, randY = random.randint(0, x), random.randint(0, y)
+                self.watermark.setPos(randX, randY)
 
     def mediaDecryptor(self, fileName, key, watermark):
         if self.buffer.isOpen():

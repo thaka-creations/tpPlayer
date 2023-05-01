@@ -2,7 +2,7 @@ import ctypes
 import os
 import sys
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QCursor
 from PyQt5.QtWidgets import QMainWindow, QApplication
 
@@ -13,15 +13,19 @@ os.environ['QT_MULTIMEDIA_PREFERRED_PLUGINS'] = 'windowsmediafoundation'
 
 
 class MainWindow(QMainWindow, MainController):
+    screenChanged = pyqtSignal(bool)
+
     def __init__(self):
         super().__init__()
         self.screenMode = False
         self.setupUi(self)
         self.setWindowIcon(utils.get_icon())
         self.video_window.fullScreenSignal.connect(self.full_screen)
+        self.screenChanged.connect(self.video_window.screen_changed)
 
     def resizeEvent(self, event):
         self.stackedWidget.setFixedSize(event.size().width(), event.size().height())
+        self.prevent_screen_recording()  # prevent screen recording
         return super().resizeEvent(event)
 
     # prevent screen recording
