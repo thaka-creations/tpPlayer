@@ -187,6 +187,7 @@ def sync_keys():
     if len(keys) > 0:
         # remove empty list
         local_keys = [key for key in local_keys if key]
+        print("local keys", local_keys)
         new_keys = [
             key for key in local_keys if key['key'] in keys
         ]
