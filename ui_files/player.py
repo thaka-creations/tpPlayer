@@ -1,16 +1,20 @@
 import os
 import sys
+import utils
+import key_utils
+from threading import Thread
 
 from PyQt5.QtCore import Qt, QDir, pyqtSignal, QSizeF, QRect, QSize, QBuffer, QIODevice, QSettings
-from PyQt5.QtGui import QMovie
+from PyQt5.QtGui import QMovie, QFont
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QGraphicsVideoItem
 from PyQt5.QtWidgets import QWidget, QPushButton, QStyle, QSlider, QHBoxLayout, QVBoxLayout, \
-    QGraphicsScene, QFileDialog, QGraphicsView, QFrame, QLabel, QGraphicsProxyWidget
+    QGraphicsScene, QFileDialog, QGraphicsView, QFrame, QLabel, QGraphicsProxyWidget, QMessageBox, QGraphicsTextItem
 
 
 class VideoWindow(QWidget):
     fullScreenSignal = pyqtSignal()
+    errorHandler = pyqtSignal()
 
     def __init__(self, stackedWidget):
         super().__init__()
@@ -19,6 +23,19 @@ class VideoWindow(QWidget):
         self.showMaximized()
         self.player = QMediaPlayer(None)
         self.buffer = QBuffer()
+
+        # initialize variables
+        self.displayAt = False
+        self.fileName = None
+        self.secondScreen = None
+        self.watermark = None
+        self.expiresAt = None
+        self.errorList = []
+        self.videoList = None
+        self.definedWidth = 0
+        self.definedHeight = 0
+        self.keyPosition = 0
+        self.step = 0
 
         # control buttons
         self.playPauseButton = QPushButton()
@@ -164,6 +181,9 @@ class VideoWindow(QWidget):
         self.mainLayout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(self.mainLayout)
 
+        # error handling
+        self.errorHandler.connect(self.handleDecryptionError)
+
         # Set stylesheet
         stylesheet = """
                     QProgressBar {
@@ -202,6 +222,13 @@ class VideoWindow(QWidget):
                     """
         self.setStyleSheet(stylesheet)
 
+    # detect screen change
+    def screen_changed(self, value):
+        if value:
+            self.displayAt = True
+        else:
+            self.displayAt = False
+
     # control spinner
     def toggle_spinner(self, state):
         if state:
@@ -217,6 +244,10 @@ class VideoWindow(QWidget):
             self.controlWidget.setVisible(False)
         else:
             self.controlWidget.setVisible(True)
+
+    # handle decryption error
+    def handleDecryptionError(self):
+        self.setMedia(self.fileName)
 
     # update video widget size
     def update_video_widget_size(self, event):
@@ -287,6 +318,7 @@ class VideoWindow(QWidget):
         last_dir_abs_path = ss.value("last_dir", QDir.homePath())
         file_name, _ = QFileDialog.getOpenFileName(self, "Open File", last_dir_abs_path)
         if file_name != "":
+            # save last dir in memory to remember video location
             last_dir_abs_path = QDir(file_name).absolutePath()
             ss.setValue("last_dir", last_dir_abs_path)
             self.loadPlayMedia(file_name)
@@ -309,6 +341,107 @@ class VideoWindow(QWidget):
         self.toggle_spinner(False)
         self.player.play()
 
+    def definedDimensions(self):
+        """
+        compute boundary watermark positioning
+        """
+        view_width = self.graphicsView.width()
+        view_height = self.graphicsView.height()
+        watermark_width = self.watermark.boundingRect().width()
+        watermark_height = self.watermark.boundingRect().height()
+        x, y = view_width - watermark_width, view_height - watermark_height
+        self.definedWidth = x
+        self.definedHeight = y
+
+    def addWatermark(self, text):
+        """
+        adding watermark to graphic scene
+        :param text: watermark text
+        """
+        self.watermark = QGraphicsTextItem(text)
+        self.watermark.setFont(QFont("Arial", 20))
+        self.watermark.setDefaultTextColor(Qt.GlobalColor.red)
+        self.scene.addItem(self.watermark)
+        self.definedDimensions()
+
+    def mediaDecryptor(self, fileName, key, watermark):
+        if self.buffer.isOpen():
+            self.player.stop()
+            self.player.setMedia(QMediaContent(), QBuffer())
+            self.buffer.close()
+
+        obj = key_utils.DecryptionTool(fileName, key,
+                                       video_list=self.videoList,
+                                       expires_at=self.expiresAt,
+                                       display_at=self.displayAt,
+                                       second_screen=self.secondScreen
+                                       )
+        content = b''
+        for data in obj.decrypt():
+            if not data:
+                self.keyPosition += 1
+                self.errorList = obj.error_list
+                self.errorHandler.emit()
+                return
+            # write to buffer
+            content += data
+
+        if bool(watermark):
+            self.addWatermark(watermark)
+
+        # set content to buffer
+        self.buffer.setData(content)
+        self.buffer.open(QIODevice.OpenModeFlag.ReadOnly)
+        self.player.setMedia(QMediaContent(), self.buffer)
+        self.playPauseButton.setEnabled(True)
+        self.set_button_states(True)
+        self.positionSlider.setEnabled(True)
+        self.toggle_spinner(False)
+        self.player.play()
+
+    def retrieveKey(self):
+        keys = utils.get_local_keys()
+        length_of_keys = len(keys)
+        keys.reverse()
+        if self.keyPosition > length_of_keys - 1:
+            return None
+        return keys[self.keyPosition]
+
+    def displayError(self):
+        # disable controls
+        self.set_button_states(False)
+
+        # remove loader
+        self.toggle_spinner(False)
+        self.player.stop()
+
+        # display error message
+        if 414 in self.errorList:
+            error_message = "This video cannot be played on second screen"
+        elif 411 in self.errorList:
+            error_message = "Kindly purchase this video to play"
+        elif 410 in self.errorList:
+            error_message = "Your key has expired"
+        else:
+            error_message = "Invalid key provided"
+        self.display_message("Error", error_message)
+
+    def setMedia(self, fileName):
+        key = self.retrieveKey()
+        if not key:
+            self.displayError()
+            return
+        self.fileName = fileName
+        encryption_key = key['encryption_key']
+        watermark = key['watermark']
+        self.expiresAt = key['expires_at']
+        self.secondScreen = key['second_screen']
+        self.videoList = key['videos']
+        self.scene.addItem(self.proxy)
+        self.movie.start()
+        Thread(target=self.mediaDecryptor, args=(fileName, encryption_key, watermark),
+               daemon=False).start()
+
     def fullScreen(self):
         self.showFullScreen()
         self.control_layout_toggle(True)
@@ -318,3 +451,16 @@ class VideoWindow(QWidget):
         self.player.stop()
         self.close()
         self.stackedWidget.setCurrentIndex(0)
+
+    @staticmethod
+    def display_message(status_code, message):
+        message_box = QMessageBox()
+        message_box.setWindowTitle(status_code)
+        message_box.setText(message)
+        message_box.setStandardButtons(QMessageBox.StandardButton.Ok)
+
+        if status_code == "Success":
+            message_box.setIcon(QMessageBox.Icon.Information)
+        else:
+            message_box.setIcon(QMessageBox.Icon.Warning)
+        message_box.exec()
