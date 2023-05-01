@@ -285,6 +285,16 @@ class VideoWindow(QWidget):
             self.player.setMuted(True)
             self.muteButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaVolumeMuted))
 
+    # remove watermark
+    def remove_watermark(self, hide=False):
+        if hide:
+            # hide watermark on stop
+            self.watermark.hide()
+        else:
+            # remove existing if watermark exists
+            if self.watermark in self.scene.items():
+                self.scene.removeItem(self.watermark)
+
     def setPosition(self, position):
         self.player.setPosition(position)
 
@@ -316,12 +326,14 @@ class VideoWindow(QWidget):
         # remember home path
         ss = QSettings("TafaPlayer", "TafaPlayer")
         last_dir_abs_path = ss.value("last_dir", QDir.homePath())
-        file_name, _ = QFileDialog.getOpenFileName(self, "Open File", last_dir_abs_path)
+        file_name, _ = QFileDialog.getOpenFileName(self, "Select Media", last_dir_abs_path, "Video Files (*.tafa)")
         if file_name != "":
+            self.remove_watermark()
+            self.keyPosition = 0
             # save last dir in memory to remember video location
             last_dir_abs_path = QDir(file_name).absolutePath()
             ss.setValue("last_dir", last_dir_abs_path)
-            self.loadPlayMedia(file_name)
+            self.setMedia(file_name)
 
     # load to memory and play file
     def loadPlayMedia(self, file_name):
