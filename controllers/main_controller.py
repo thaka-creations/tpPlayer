@@ -60,7 +60,7 @@ class MainController(Ui_MainWindow):
             print("local keys found", keys)
             for key in keys:
                 self.keyListWidget.addItem(key['key'])
-        except (None, TypeError):
+        except Exception as e:
             self.display_message("Error", "No keys found")
         self.titleLabel3.setText("REGISTERED KEYS")
         self.stackedWidget.setCurrentIndex(3)
