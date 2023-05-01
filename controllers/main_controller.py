@@ -57,14 +57,10 @@ class MainController(Ui_MainWindow):
         self.keyListWidget.clear()
         keys = utils.get_local_keys()
         try:
-            if keys is not None or not keys:
-                print("local keys found", keys)
-                for key in keys:
-                    self.keyListWidget.addItem(key['key'])
-            else:
-                self.display_message("Error", "No keys found")
-        except Exception as e:
-            print(e)
+            print("local keys found", keys)
+            for key in keys:
+                self.keyListWidget.addItem(key['key'])
+        except (None, TypeError):
             self.display_message("Error", "No keys found")
         self.titleLabel3.setText("REGISTERED KEYS")
         self.stackedWidget.setCurrentIndex(3)
