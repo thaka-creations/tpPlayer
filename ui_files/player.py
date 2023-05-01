@@ -1,7 +1,7 @@
 import os
 import sys
 
-from PyQt5.QtCore import Qt, QDir, pyqtSignal, QSizeF, QRect, QSize, QBuffer, QIODevice
+from PyQt5.QtCore import Qt, QDir, pyqtSignal, QSizeF, QRect, QSize, QBuffer, QIODevice, QSettings
 from PyQt5.QtGui import QMovie
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QGraphicsVideoItem
@@ -283,10 +283,12 @@ class VideoWindow(QWidget):
 
     def openFile(self):
         # remember home path
-        lastDir = QDir.current()
-        last_dir_abs_path = lastDir.absolutePath()
+        ss = QSettings("TafaPlayer", "TafaPlayer")
+        last_dir_abs_path = ss.value("last_dir", QDir.homePath())
         file_name, _ = QFileDialog.getOpenFileName(self, "Open File", last_dir_abs_path)
         if file_name != "":
+            last_dir_abs_path = QDir(file_name).absolutePath()
+            ss.setValue("last_dir", last_dir_abs_path)
             self.loadPlayMedia(file_name)
 
     # load to memory and play file
