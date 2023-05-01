@@ -184,7 +184,7 @@ def sync_keys():
     local_keys = get_local_keys()
 
     # check if keys are registered on device
-    if len(keys) > 0:
+    if len(keys) > 0 and bool(local_keys):
         # remove empty list
         try:
             new_keys = [
