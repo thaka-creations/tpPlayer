@@ -57,7 +57,7 @@ class MainController(Ui_MainWindow):
         self.keyListWidget.clear()
         keys = utils.get_local_keys()
         try:
-            if bool(keys):
+            if keys is not None:
                 print("local keys found", keys)
                 for key in keys:
                     self.keyListWidget.addItem(key['key'])

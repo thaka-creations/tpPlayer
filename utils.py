@@ -117,10 +117,11 @@ def verify_otp(payload):
 # get local storage keys, read keys from secure storage
 def get_local_keys():
     try:
-        keys = ss.value('keys')
-        if not isinstance(keys, list):
-            return [keys]
-        return keys
+        if ss.value('keys'):
+            keys = ss.value('keys')
+            if not isinstance(keys, list):
+                return [keys]
+            return keys
     except Exception as e:
         print(e)
         return []
