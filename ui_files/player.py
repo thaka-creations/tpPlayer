@@ -283,8 +283,9 @@ class VideoWindow(QWidget):
 
     def openFile(self):
         # remember home path
-        home_path = QDir.homePath()
-        file_name, _ = QFileDialog.getOpenFileName(self, "Open File", home_path)
+        lastDir = QDir.current()
+        last_dir_abs_path = lastDir.absolutePath()
+        file_name, _ = QFileDialog.getOpenFileName(self, "Open File", last_dir_abs_path)
         if file_name != "":
             self.loadPlayMedia(file_name)
 
