@@ -186,13 +186,13 @@ def sync_keys():
     # check if keys are registered on device
     if len(keys) > 0:
         # remove empty list
-        local_keys = [key for key in local_keys if key]
-        print("local keys", local_keys)
-        new_keys = [
-            key for key in local_keys if key['key'] in keys
-        ]
-        Thread(target=register_keys, args=(new_keys,), daemon=False).start()
-
+        try:
+            new_keys = [
+                key for key in local_keys if key['key'] in keys
+            ]
+            Thread(target=register_keys, args=(new_keys,), daemon=False).start()
+        except TypeError:
+            ss.remove('keys')
 
 # register keys to app
 def register_keys(keys):
