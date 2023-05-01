@@ -187,6 +187,7 @@ def sync_keys():
     if len(keys) > 0:
         new_keys = []
         for key in local_keys:
+            print("key", local_keys)
             try:
                 if key['key'] in keys:
                     new_keys.append(key['key'])
