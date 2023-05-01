@@ -282,7 +282,9 @@ class VideoWindow(QWidget):
         self.playPauseButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_MediaPlay))
 
     def openFile(self):
-        file_name, _ = QFileDialog.getOpenFileName(self, "Open File", QDir.homePath())
+        # remember home path
+        home_path = QDir.homePath()
+        file_name, _ = QFileDialog.getOpenFileName(self, "Open File", home_path)
         if file_name != "":
             self.loadPlayMedia(file_name)
 
