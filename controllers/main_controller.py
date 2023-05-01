@@ -61,7 +61,7 @@ class MainController(Ui_MainWindow):
                 self.keyListWidget.addItem(key['key'])
         except Exception as e:
             print(e)
-            self.display_message("No keys found")
+            self.display_message("Error", "No keys found")
         self.titleLabel3.setText("REGISTERED KEYS")
         self.stackedWidget.setCurrentIndex(3)
 
@@ -126,7 +126,7 @@ class MainController(Ui_MainWindow):
                 return
         except Exception as e:
             print(e)
-            self.display_message("No keys found")
+            self.display_message("Error", "No keys found")
 
     def on_alt_result(self, reply):
         if not (reply.error() == QNetworkReply.NetworkError.NoError):

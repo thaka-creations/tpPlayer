@@ -334,24 +334,6 @@ class VideoWindow(QWidget):
             ss.setValue("last_dir", last_dir_abs_path)
             self.setMedia(file_name)
 
-    # load to memory and play file
-    def loadPlayMedia(self, file_name):
-        self.toggle_spinner(True)
-        # overwrite buffer
-        if self.buffer.isOpen():
-            # remove video from player
-            self.player.stop()
-            self.player.setMedia(QMediaContent(), QBuffer())
-            self.buffer.close()
-        self.buffer.setData(open(file_name, 'rb').read())
-        self.buffer.open(QIODevice.OpenModeFlag.ReadOnly)
-        self.player.setMedia(QMediaContent(), self.buffer)
-        self.playPauseButton.setEnabled(True)
-        self.set_button_states(True)
-        self.positionSlider.setEnabled(True)
-        self.toggle_spinner(False)
-        self.player.play()
-
     def definedDimensions(self):
         """
         compute boundary watermark positioning
