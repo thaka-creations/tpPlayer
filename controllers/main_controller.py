@@ -57,8 +57,10 @@ class MainController(Ui_MainWindow):
         self.keyListWidget.clear()
         keys = utils.get_local_keys()
         try:
-            for key in keys:
-                self.keyListWidget.addItem(key['key'])
+            if bool(keys):
+                print("local keys found", keys)
+                for key in keys:
+                    self.keyListWidget.addItem(key['key'])
         except Exception as e:
             print(e)
             self.display_message("Error", "No keys found")
