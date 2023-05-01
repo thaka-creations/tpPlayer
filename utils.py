@@ -184,7 +184,6 @@ def sync_keys():
     local_keys = get_local_keys()
 
     # check if keys are registered on device
-    print("local keys", get_local_keys())
     print("app keys", get_app_keys())
     if len(keys) > 0:
         new_keys = [
