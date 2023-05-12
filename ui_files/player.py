@@ -81,7 +81,7 @@ class VideoWindow(QWidget):
         self.volumeSlider.valueChanged.connect(self.player.setVolume)
 
         # open file button
-        self.openFileButton = QPushButton()
+        self.openFileButton = QPushButton("Open File")
         self.openFileButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_DirOpenIcon))
         self.openFileButton.clicked.connect(self.openFile)
         self.openFileButton.setFixedSize(50, 50)
