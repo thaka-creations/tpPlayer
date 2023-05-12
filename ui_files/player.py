@@ -84,7 +84,7 @@ class VideoWindow(QWidget):
         self.openFileButton = QPushButton("Open File")
         self.openFileButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_DirOpenIcon))
         self.openFileButton.clicked.connect(self.openFile)
-        self.openFileButton.setFixedSize(50, 50)
+        self.openFileButton.setFixedSize(200, 50)
 
         # close button
         self.closeButton = QPushButton()
