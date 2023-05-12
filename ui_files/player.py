@@ -81,7 +81,7 @@ class VideoWindow(QWidget):
         self.volumeSlider.valueChanged.connect(self.player.setVolume)
 
         # open file button
-        self.openFileButton = QPushButton("Open File")
+        self.openFileButton = QPushButton(" Open File")
         self.openFileButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_DirOpenIcon))
         self.openFileButton.clicked.connect(self.openFile)
         self.openFileButton.setFixedSize(180, 50)
@@ -93,7 +93,7 @@ class VideoWindow(QWidget):
         self.closeButton.setFixedSize(50, 50)
 
         # full screen button
-        self.fullScreenButton = QPushButton("Full Screen")
+        self.fullScreenButton = QPushButton(" Full Screen")
         self.fullScreenButton.setIcon(self.style().standardIcon(QStyle.StandardPixmap.SP_TitleBarMaxButton))
         self.fullScreenButton.clicked.connect(self.fullScreen)
         self.fullScreenButton.setFixedSize(180, 50)
