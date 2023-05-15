@@ -132,7 +132,7 @@ class VideoWindow(QWidget):
         self.spinner.setMaximumSize(QSize(250, 250))
         self.spinner.setObjectName("lb1")
         try:
-            loader = os.path.join(sys._MEIPASS, "/assets/loader.gif")
+            loader = os.path.join(sys._MEIPASS, "assets/loader.gif")
         except AttributeError:
             loader = "assets/loader.gif"
         self.movie = QMovie(loader)
