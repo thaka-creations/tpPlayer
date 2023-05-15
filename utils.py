@@ -254,7 +254,14 @@ def get_windows_model_name():
     try:
         model_name = output.stdout.strip().split("\n")[2]
     except IndexError:
-        model_name = output.stdout.strip().split("\n")[1]
+        try:
+            model_name = output.stdout.strip().split("\n")[1]
+        except  IndexError:
+            try:
+                model_name = output.stdout.strip().split("\n")
+            except Exception as e:
+                print(e)
+                model_name = "HP"
     return model_name
 
 
