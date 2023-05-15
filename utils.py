@@ -229,7 +229,7 @@ def get_windows_serial_number():
         return serial_number
     except Exception as e:
         print(e)
-        return None
+        return "HP"
 
 
 def get_serial_number():
