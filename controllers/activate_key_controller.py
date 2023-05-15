@@ -60,7 +60,7 @@ class ActivateKeyController(Ui_activateKeyDialog):
         self.cancelKeyDialogButton.click()
         message_box = QMessageBox()
         message_box.setWindowTitle(status_code)
-        message_box.setText(message)
+        message_box.setText(str(message))
         message_box.setStandardButtons(QMessageBox.StandardButton.Ok)
 
         if status_code == "Success":
