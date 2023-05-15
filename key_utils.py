@@ -5,6 +5,7 @@ from base64 import b64decode
 from datetime import datetime
 
 from Cryptodome.Cipher import AES
+from Cryptodome.Util.Padding import unpad
 
 
 class DecryptionTool:
