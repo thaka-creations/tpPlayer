@@ -250,19 +250,16 @@ def get_mac_model_name():
 
 
 def get_windows_model_name():
-    output = subprocess.run("wmic csproduct get name", shell=True, capture_output=True, text=True)
     try:
-        model_name = output.stdout.strip().split("\n")[2]
-    except IndexError:
-        try:
-            model_name = output.stdout.strip().split("\n")[1]
-        except  IndexError:
-            try:
-                model_name = output.stdout.strip().split("\n")
-            except Exception as e:
-                print(e)
-                model_name = "HP"
-    return model_name
+        output = subprocess.run("wmic computersystem get model", shell=True, capture_output=True, text=True)
+        if output.returncode == 0:
+            lines = output.stdout.strip().split("\n")
+            if len(lines) >= 2:
+                model_name = lines[1].strip()
+                return model_name
+    except Exception as e:
+        print("Error:", e)
+    return "Unknown"
 
 
 # get machine model name
