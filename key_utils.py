@@ -1,6 +1,7 @@
 import hashlib
 import json
 import os
+import mmap
 from base64 import b64decode
 from datetime import datetime
 
@@ -69,8 +70,10 @@ class DecryptionTool:
         #  exact same as above function except in reverse
         content = b''
         with open(self.user_file, 'rb') as input_file:
-            for piece in self.read_in_chunks(input_file, self.chunk_size):
-                content += piece
+            with mmap.mmap(input_file.fileno(), 0, prot=mmap.PROT_READ) as mm:
+                for piece in self.read_in_chunks(mm, self.chunk_size):
+                    content += piece
+
         try:
             parsed_data = json.loads(content.decode('utf-8'))
             json_k = ['iv', 'ciphertext', 'extra']
