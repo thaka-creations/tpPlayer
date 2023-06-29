@@ -276,6 +276,8 @@ def get_model_mame():
 def register_app():
     url = f"{BASE_URL}/api/v1/videos/app-registered"
     payload = {"serial_number": get_serial_number(), "model_name": get_model_mame()}
+    print("base url", url)
+    print("payload", payload)
     response = requests.post(url, json=payload)
 
     if not response.status_code == 200:
@@ -331,7 +333,10 @@ def get_registered_keys():
     try:
         url = f"{BASE_URL}/api/v1/videos/list-client-keys"
         headers = retrieve_headers()
-        app_id = get_app_id()['id']
+        try:
+            app_id = get_app_id()['id']
+        except (KeyError, TypeError):
+            return False, "App not registered"
         headers.update({'request_id': app_id})
         response = requests.post(url, json=headers)
         if not response.status_code == 200:
