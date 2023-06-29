@@ -259,7 +259,7 @@ def get_windows_model_name():
                 return model_name
     except Exception as e:
         print("Error:", e)
-    return "Unknown"
+    return "Computer"
 
 
 # get machine model name
@@ -269,7 +269,9 @@ def get_model_name():
         model_name = get_mac_model_name()
     else:
         model_name = get_windows_model_name()
-    print("model name", model_name)
+
+    if not model_name:
+        model_name = "Computer"
     return model_name
 
 
