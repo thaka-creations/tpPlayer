@@ -263,19 +263,20 @@ def get_windows_model_name():
 
 
 # get machine model name
-def get_model_mame():
+def get_model_name():
     os_type = platform.system()
     if 'darwin' in os_type.lower():
         model_name = get_mac_model_name()
     else:
         model_name = get_windows_model_name()
+    print("model name", model_name)
     return model_name
 
 
 # register app
 def register_app():
     url = f"{BASE_URL}/api/v1/videos/app-registered"
-    payload = {"serial_number": get_serial_number(), "model_name": get_model_mame()}
+    payload = {"serial_number": get_serial_number(), "model_name": get_model_name()}
     print("base url", url)
     print("payload", payload)
     response = requests.post(url, json=payload)
