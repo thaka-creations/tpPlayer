@@ -71,8 +71,9 @@ class DecryptionTool:
         content = b''
         with open(self.user_file, 'rb') as input_file:
             with mmap.mmap(input_file.fileno(), 0, access=mmap.ACCESS_READ) as mm:
-                for piece in self.read_in_chunks(mm, self.chunk_size):
-                    content += piece
+                content = mm.read()
+                # for piece in self.read_in_chunks(mm, self.chunk_size):
+                #     content += piece
 
         try:
             parsed_data = json.loads(content.decode('utf-8'))
